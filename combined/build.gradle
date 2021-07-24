@@ -13,12 +13,18 @@ repositories {
     ruby.gems()
 }
 
+configurations {
+    pdf
+}
+
 dependencies {
     asciidoctorGems 'rubygems:rouge:3.15.0'
+    pdf 'me.champeau.deck2pdf:deck2pdf:0.3.0'
 }
 
 asciidoctorPdf {
     sourceDir file("src/docs")
+    sourceDir file("src/slides")
 
     dependsOn asciidoctorGemsPrepare
 
@@ -69,3 +75,11 @@ asciidoctorRevealJs {
 
 // alias
 task asciidoctor(dependsOn: [asciidoctorPdf, asciidoctorRevealJs])
+
+task generatePdf(type:JavaExec) {
+    dependsOn asciidoctor
+    main = 'me.champeau.deck2pdf.Main'
+    workingDir = file("$buildDir/docs/asciidocRevealJs/")
+    args = ["$workingDir/example-deck.html","$workingDir../asciiDocPdf/example-deck.pdf", '--profile=revealjs']
+    classpath = configurations.pdf
+}
