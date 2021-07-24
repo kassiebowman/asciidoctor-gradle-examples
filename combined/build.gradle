@@ -52,7 +52,7 @@ asciidoctorRevealJs {
             'endpoint-url': 'http://example.org',
             'source-highlighter': 'coderay',
             'coderay-css': 'style',
-            'imagesdir': '../resources/images',
+            'imagesdir': './images',
             'toc': 'left',
             'icons': 'font',
             'setanchors': '',
