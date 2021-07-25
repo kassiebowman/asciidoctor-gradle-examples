@@ -74,6 +74,7 @@ subprojects {
 }
 
 task copyArtifactsForDistributionZip(description: 'Copies the artifacts that will be included in the distribution zip file') {
+    dependsOn subprojects.collect { "${it.name}:asciidoctor" }
     ext {
         artifactDir = file("${buildDir}/toArchive")
     }
@@ -82,10 +83,9 @@ task copyArtifactsForDistributionZip(description: 'Copies the artifacts that wil
         subprojects.each { project ->
             def projectDir = project.file("${artifactDir}/${project.name}")
             copy {
-                from project.buildDir
+                from project.layout.buildDirectory.dir("docs/asciidocPdf")
+                from project.layout.buildDirectory.dir("docs/asciidocRevealJs")
                 into projectDir
-                include 'docs/asciidocPdf/**'
-                include 'docs/asciidocRevealJs/**'
             }
         }
     }
