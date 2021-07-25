@@ -75,13 +75,12 @@ subprojects {
 
 task copyArtifactsForDistributionZip(description: 'Copies the artifacts that will be included in the distribution zip file') {
     ext {
-        tmpDir = file("${projectDir}/tmp")
-        artifactTempDir = file("${tmpDir}/dist")
+        artifactDir = file("${buildDir}/toArchive")
     }
-    outputs.dir artifactTempDir
+    outputs.dir artifactDir
     doLast {
         subprojects.each { project ->
-            def projectDir = project.file("${artifactTempDir}/${project.name}")
+            def projectDir = project.file("${artifactDir}/${project.name}")
             copy {
                 from project.buildDir
                 into projectDir
