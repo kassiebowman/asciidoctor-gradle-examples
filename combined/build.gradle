@@ -69,3 +69,9 @@ asciidoctorRevealJs {
 
 // alias
 task asciidoctor(dependsOn: [asciidoctorPdf, asciidoctorRevealJs])
+
+tasks.register('packageDistribution', Zip) {
+    dependsOn asciidoctor
+    from layout.buildDirectory.dir("docs/asciidocPdf")
+    from layout.buildDirectory.dir("docs/asciidocRevealJs")
+}
