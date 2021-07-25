@@ -1,8 +1,8 @@
 plugins {
     id 'base'
-    id 'org.asciidoctor.jvm.pdf' version '3.3.0'
-    id 'org.asciidoctor.jvm.gems' version '3.3.0'
-    id 'org.asciidoctor.jvm.revealjs' version '3.3.0'
+    id 'org.asciidoctor.jvm.pdf' version '3.3.0' apply false
+    id 'org.asciidoctor.jvm.gems' version '3.3.0' apply false
+    id 'org.asciidoctor.jvm.revealjs' version '3.3.0' apply false
 }
 
 allprojects {
