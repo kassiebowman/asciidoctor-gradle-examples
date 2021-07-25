@@ -1,0 +1,77 @@
+plugins {
+    id 'org.asciidoctor.jvm.pdf' version '3.3.0'
+    id 'org.asciidoctor.jvm.gems' version '3.3.0'
+    id 'org.asciidoctor.jvm.revealjs' version '3.3.0'
+}
+
+apply plugin: 'java'
+
+version = '1.0.0-SNAPSHOT'
+
+repositories {
+    jcenter()
+    ruby.gems()
+}
+
+dependencies {
+    asciidoctorGems 'rubygems:rouge:3.15.0'
+}
+
+asciidoctorPdf {
+    sourceDir file("src/docs")
+
+    dependsOn asciidoctorGemsPrepare
+
+    baseDirFollowsSourceFile()
+
+    asciidoctorj {
+        requires 'rouge'
+        attributes 'build-gradle': file('build.gradle'),
+                'sourcedir': project.sourceSets.main.java.srcDirs[0],
+                'endpoint-url': 'http://example.org',
+                'source-highlighter': 'rouge',
+                'imagesdir': '../resources/images',
+                'toc': 'left',
+                'icons': 'font',
+                'idprefix': '',
+                'idseparator': '-'
+    }
+}
+
+asciidoctorRevealJs {
+    sourceDir file("src/slides")
+
+    baseDirFollowsSourceFile()
+
+    resources {
+        from("src/resources") {
+            include '**'
+            into '.'
+        }
+    }
+
+    attributes 'build-gradle': file('build.gradle'),
+            'endpoint-url': 'http://example.org',
+            'source-highlighter': 'coderay',
+            'coderay-css': 'style',
+            'imagesdir': './images',
+            'toc': 'left',
+            'icons': 'font',
+            'setanchors': '',
+            'idprefix': 'slide-',
+            'idseparator': '-',
+            'docinfo': 'shared',
+            'revealjs_theme': 'black',
+            'revealjs_transition': 'linear',
+            'revealjs_history': 'true',
+            'revealjs_slideNumber': 'true'
+}
+
+// alias
+task asciidoctor(dependsOn: [asciidoctorPdf, asciidoctorRevealJs])
+
+tasks.register('packageDistribution', Zip) {
+    dependsOn asciidoctor
+    from layout.buildDirectory.dir("docs/asciidocPdf")
+    from layout.buildDirectory.dir("docs/asciidocRevealJs")
+}
