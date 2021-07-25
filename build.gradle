@@ -1,5 +1,8 @@
 plugins {
     id 'base'
+    id 'org.asciidoctor.jvm.pdf' version '3.3.0'
+    id 'org.asciidoctor.jvm.gems' version '3.3.0'
+    id 'org.asciidoctor.jvm.revealjs' version '3.3.0'
 }
 
 allprojects {
@@ -7,11 +10,9 @@ allprojects {
 }
 
 subprojects { Project project ->
-    plugins {
-        id 'org.asciidoctor.jvm.pdf' version '3.3.0'
-        id 'org.asciidoctor.jvm.gems' version '3.3.0'
-        id 'org.asciidoctor.jvm.revealjs' version '3.3.0'
-    }
+    apply plugin:  'org.asciidoctor.jvm.pdf'
+    apply plugin: 'org.asciidoctor.jvm.gems'
+    apply plugin: 'org.asciidoctor.jvm.revealjs'
 
     repositories {
         ruby.gems()
