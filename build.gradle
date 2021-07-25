@@ -25,7 +25,7 @@ subprojects { Project project ->
     }
 
     asciidoctorPdf {
-        sourceDir file("src/docs")
+        sourceDir file("docs")
 
         dependsOn asciidoctorGemsPrepare
 
@@ -33,31 +33,34 @@ subprojects { Project project ->
 
         asciidoctorj {
             requires 'rouge'
-            attributes 'build-gradle': file('build.gradle'),
-                    'sourcedir': project.sourceSets.main.java.srcDirs[0],
-                    'endpoint-url': 'http://example.org',
-                    'source-highlighter': 'rouge',
-                    'imagesdir': '../resources/images',
-                    'toc': 'left',
-                    'icons': 'font',
-                    'idprefix': '',
-                    'idseparator': '-'
         }
+
+        attributes(
+                'sourcedir': project.sourceSets.main.java.srcDirs[0],
+                'endpoint-url': 'http://example.org',
+                'source-highlighter': 'rouge',
+                'imagesdir': '../resources/images',
+                'revnumber': { project.version.toString() },
+                'toc': 'left',
+                'icons': 'font',
+                'idprefix': '',
+                'idseparator': '-',
+        )
     }
 
     asciidoctorRevealJs {
-        sourceDir file("src/slides")
+        sourceDir file("slides")
 
         baseDirFollowsSourceFile()
 
         resources {
-            from("src/resources") {
+            from("resources") {
                 include '**'
                 into '.'
             }
         }
 
-        attributes 'build-gradle': file('build.gradle'),
+        attributes(
                 'endpoint-url': 'http://example.org',
                 'source-highlighter': 'coderay',
                 'coderay-css': 'style',
@@ -71,7 +74,9 @@ subprojects { Project project ->
                 'revealjs_theme': 'black',
                 'revealjs_transition': 'linear',
                 'revealjs_history': 'true',
-                'revealjs_slideNumber': 'true'
+                'revealjs_slideNumber': 'true',
+                'revnumber': { project.version.toString() },
+        )
     }
 
     task asciidoctor(dependsOn: [asciidoctorPdf, asciidoctorRevealJs])

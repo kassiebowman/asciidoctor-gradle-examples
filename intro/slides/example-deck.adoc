@@ -2,8 +2,8 @@
 Doc Writer <doc.writer@example.org>
 2020-02-07
 :example-caption!:
-:imagesdir: images
-:sourcedir: ../../main/java
+:imagesdir: ../resources/images
+:sourcedir: ../resources
 
 == Introduction
 
@@ -22,14 +22,6 @@ You've unlocked the super secret notes area.
 Neat huh?
 --
 
-== Source Code
-
-[source,java]
-.Java code from project
-----
-include::{sourcedir}/example/StringUtils.java[tags=contains,indent=0]
-----
-
 This page was built by the following command:
 
  $ ./gradlew asciidoctor
@@ -43,12 +35,6 @@ Hit it again to bring it back.
 == Overview
 
 Press the `*esc*` key to get an overview of your slides.
-
-== Including documents from subdir
-
-.include::subdir/_b.adoc[]
-
-include::subdir/_b.adoc[]
 
 == Images
 
@@ -72,10 +58,3 @@ imagesdir:: {imagesdir}
 revnumber:: {revnumber}
 sourcedir:: {sourcedir}
 endpoint-url:: {endpoint-url}
-
-== build.gradle
-
-[source,groovy]
-----
-include::{build-gradle}[]
-----
