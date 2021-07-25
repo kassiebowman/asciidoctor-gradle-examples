@@ -10,7 +10,8 @@ allprojects {
 }
 
 subprojects { Project project ->
-    apply plugin:  'org.asciidoctor.jvm.pdf'
+    apply plugin: 'java'
+    apply plugin: 'org.asciidoctor.jvm.pdf'
     apply plugin: 'org.asciidoctor.jvm.gems'
     apply plugin: 'org.asciidoctor.jvm.revealjs'
 
@@ -32,6 +33,7 @@ subprojects { Project project ->
         asciidoctorj {
             requires 'rouge'
             attributes 'build-gradle': file('build.gradle'),
+                    'sourcedir': project.sourceSets.main.java.srcDirs[0],
                     'endpoint-url': 'http://example.org',
                     'source-highlighter': 'rouge',
                     'imagesdir': '../resources/images',
