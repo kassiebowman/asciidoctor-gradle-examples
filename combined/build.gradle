@@ -2,6 +2,7 @@ plugins {
     id 'org.asciidoctor.jvm.pdf' version '3.3.0'
     id 'org.asciidoctor.jvm.gems' version '3.3.0'
     id 'org.asciidoctor.jvm.revealjs' version '3.3.0'
+    id 'org.openjfx.javafxplugin' version '0.0.9'
 }
 
 apply plugin: 'java'
@@ -15,6 +16,10 @@ repositories {
 
 configurations {
     pdf
+}
+
+javafx {
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
 
 dependencies {
