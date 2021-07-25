@@ -16,7 +16,7 @@ subprojects { Project project ->
     apply plugin: 'org.asciidoctor.jvm.revealjs'
 
     project.repositories {
-        jcenter()
+        mavenCentral()
         ruby.gems()
     }
 
