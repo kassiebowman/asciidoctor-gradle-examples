@@ -3,7 +3,10 @@ plugins {
     id 'org.asciidoctor.jvm.pdf' version '3.3.0' apply false
     id 'org.asciidoctor.jvm.gems' version '3.3.0' apply false
     id 'org.asciidoctor.jvm.revealjs' version '3.3.0' apply false
+    id 'org.asciidoctor.decktape.base' version '3.3.0' apply false
 }
+
+import org.asciidoctor.gradle.slides.export.decktape.DeckTapeTask
 
 allprojects {
     version = '1.0.0-SNAPSHOT'
@@ -14,6 +17,7 @@ subprojects {
     apply plugin: 'org.asciidoctor.jvm.pdf'
     apply plugin: 'org.asciidoctor.jvm.gems'
     apply plugin: 'org.asciidoctor.jvm.revealjs'
+    apply plugin: 'org.asciidoctor.decktape.base'
 
     repositories {
         mavenCentral()
@@ -85,6 +89,14 @@ subprojects {
         dependsOn asciidoctor
         from project.layout.buildDirectory.dir("docs/asciidocPdf")
         from project.layout.buildDirectory.dir("docs/asciidocRevealJs")
+    }
+
+    // See: https://github.com/asciidoctor/asciidoctor-gradle-plugin/blob/34837b18609821bd85c239453a3111d13c1e0d0a/docs/src/docs/asciidoc/parts/exporting-slides.adoc
+    task standalonePdfConverter(type: DeckTapeTask) {
+        dependsOn asciidoctor
+        outputDir "${buildDir}/docs/asciidocRevealJs"
+        slides asciidoctorRevealJs
+        profile 'reveal_js'
     }
 }
 
