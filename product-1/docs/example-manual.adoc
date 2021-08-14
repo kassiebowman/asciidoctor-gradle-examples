@@ -1,11 +1,10 @@
 = Example Manual
 Doc Writer <doc.writer@example.org>
 2014-09-09
+:revnumber: {project-version}
 :example-caption!:
-:source-highlighter: highlight.js
-:imagesdir: images
-:sourcedir: ../../main/java
-:build-gradle: ../../../build.gradle
+ifndef::imagesdir[:imagesdir: ../resources/images]
+ifndef::sourcedir[:sourcedir: ../resources]
 
 This is a user manual for an example project.
 
@@ -13,14 +12,6 @@ This is a user manual for an example project.
 
 This project does something.
 We just haven't decided what that is yet.
-
-== Source Code
-
-[source,java]
-.Java code from project
-----
-include::{sourcedir}/example/StringUtils.java[tags=contains,indent=0]
-----
 
 This page was built by the following command:
 
@@ -41,22 +32,6 @@ docfile:: {docfile}
 imagesdir:: {imagesdir}
 
 .Custom
-project-version:: {revnumber}
+project-version:: {project-version}
 sourcedir:: {sourcedir}
 endpoint-url:: {endpoint-url}
-
-== Includes
-
-.include::subdir/_b.adoc[]
-====
-include::subdir/_b.adoc[]
-====
-
-WARNING: Includes can be tricky!
-
-== build.gradle
-
-[source,groovy]
-----
-include::{build-gradle}[]
-----

@@ -1,73 +1,110 @@
 plugins {
-  id 'com.github.ben-manes.versions' version '0.14.0'
+    id 'base'
+    id 'org.asciidoctor.jvm.pdf' version '3.3.0' apply false
+    id 'org.asciidoctor.jvm.gems' version '3.3.0' apply false
+    id 'org.asciidoctor.jvm.revealjs' version '3.3.0' apply false
 }
 
-apply plugin: 'idea'
-
-idea {
-    project {
-        ipr {
-            withXml { provider ->
-                def node = provider.asNode()
-                //configure git support for the project in idea
-                node.component.find { it.'@name' == 'VcsDirectoryMappings' }?.mapping[0].'@vcs' = 'Git'
-            }
-        }
-    }
-}
-
-task publish {
-    File index = new File("$rootDir/build/index.adoc")
-    index.parentFile.mkdirs()
-    def header = """= Asciidoctor Gradle Examples
-Rob Winch <https://github.com/rwinch[@rwinch]>; Dan Hyun <https://github.com/danhyun[@danhyun]>
-:icons: font
-:toc: left
-:numbered:
-:github_url: https://github.com/asciidoctor/asciidoctor-gradle-examples
-:github_project_path: {github_url}/tree/master
-:github_fork_badge: https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png
-
-[.badge]
-image::{github_fork_badge}[link="{github_url}"]
-
-[discrete]
-== About
-
-This repository contains examples on how to use Gradle and Asciidoctor to create html5, pdf, epub, deck.js, and reveal.js outputs.
-
-"""
-    index.text = header
-    new File("$rootDir/build/docinfo.html").text = '<style>.badge { position: fixed; top: 0; right: 0; }</style>'
+allprojects {
+    version = '1.0.0-SNAPSHOT'
 }
 
 subprojects {
-    task copyOutput(type: Copy, dependsOn: ["asciidoctor"]) {
-        from "$project.buildDir/docs"
-        into "$project.projectDir"
+    apply plugin: 'java'
+    apply plugin: 'org.asciidoctor.jvm.pdf'
+    apply plugin: 'org.asciidoctor.jvm.gems'
+    apply plugin: 'org.asciidoctor.jvm.revealjs'
+
+    repositories {
+        mavenCentral()
+        ruby.gems()
     }
 
-    task publish(dependsOn: "copyOutput") {
-        doLast {
-            File index = new File("$rootDir/build/index.adoc")
-            def projectName = project.projectDir.name
-            def content = """include::{rootDir}/$projectName/README.adoc[leveloffset=+1]
+    dependencies {
+        asciidoctorGems 'rubygems:rouge:3.15.0'
+    }
 
-=== Source
+    asciidoctorPdf {
+        sourceDir file("docs")
 
-* {github_project_path}/$projectName[View source]
+        dependsOn asciidoctorGemsPrepare
 
-=== Outputs
-"""
-            index << content
-            def outputs = []
-            new File("$project.buildDir/docs").eachDir { dir ->
-                dir.eachFileMatch(~/.*\.(html|pdf|epub|mobi)/) { f ->
-                    def dirName = dir.name
-                    outputs << "* link:./$projectName/$dirName/$f.name[$dirName]\n"
-                }
+        baseDirFollowsSourceFile()
+
+        asciidoctorj {
+            requires 'rouge'
+        }
+
+        attributes(
+                'sourcedir': project.sourceSets.main.java.srcDirs[0],
+                'endpoint-url': 'http://example.org',
+                'source-highlighter': 'rouge',
+                'imagesdir': '../resources/images',
+                'revnumber': { project.version.toString() },
+                'toc': 'left',
+                'icons': 'font',
+                'idprefix': '',
+                'idseparator': '-',
+        )
+    }
+
+    asciidoctorRevealJs {
+        sourceDir file("slides")
+
+        baseDirFollowsSourceFile()
+
+        resources {
+            from("resources") {
+                include '**'
+                into '.'
             }
-            index << outputs.join('\n') << "\n"
+        }
+
+        attributes(
+                'endpoint-url': 'http://example.org',
+                'source-highlighter': 'coderay',
+                'coderay-css': 'style',
+                'imagesdir': './images',
+                'toc': 'left',
+                'icons': 'font',
+                'setanchors': '',
+                'idprefix': 'slide-',
+                'idseparator': '-',
+                'docinfo': 'shared',
+                'revealjs_theme': 'black',
+                'revealjs_transition': 'linear',
+                'revealjs_history': 'true',
+                'revealjs_slideNumber': 'true',
+                'revnumber': { project.version.toString() },
+        )
+    }
+
+    task asciidoctor(dependsOn: [asciidoctorPdf, asciidoctorRevealJs])
+
+    tasks.register('buildDistributionZip', Zip) {
+        dependsOn asciidoctor
+        from project.layout.buildDirectory.dir("docs/asciidocPdf")
+        from project.layout.buildDirectory.dir("docs/asciidocRevealJs")
+    }
+}
+
+task copyArtifactsForDistributionZip(description: 'Copies the artifacts that will be included in the distribution zip file') {
+    dependsOn subprojects.collect { "${it.name}:asciidoctor" }
+    def artifactDir = file("${buildDir}/toArchive")
+    outputs.dir artifactDir
+
+    doLast {
+        subprojects.each { project ->
+            def projectDir = project.file("${artifactDir}/${project.name}")
+            copy {
+                from project.layout.buildDirectory.dir("docs/asciidocPdf")
+                from project.layout.buildDirectory.dir("docs/asciidocRevealJs")
+                into projectDir
+            }
         }
     }
+}
+task buildDistributionZip(type: Zip) {
+    dependsOn 'copyArtifactsForDistributionZip'
+    from copyArtifactsForDistributionZip.outputs.files
 }
