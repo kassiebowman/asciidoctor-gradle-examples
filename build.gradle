@@ -9,18 +9,18 @@ allprojects {
     version = '1.0.0-SNAPSHOT'
 }
 
-subprojects { Project project ->
+subprojects {
     apply plugin: 'java'
     apply plugin: 'org.asciidoctor.jvm.pdf'
     apply plugin: 'org.asciidoctor.jvm.gems'
     apply plugin: 'org.asciidoctor.jvm.revealjs'
 
-    project.repositories {
+    repositories {
         mavenCentral()
         ruby.gems()
     }
 
-    project.dependencies {
+    dependencies {
         asciidoctorGems 'rubygems:rouge:3.15.0'
     }
 
